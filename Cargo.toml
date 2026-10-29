@@ -1,0 +1,21 @@
+[package]
+name = "can-you-find-rust-on-a-map"
+version = "1.0.0"
+edition = "2024"
+authors = ["Ferris", "Michel Kraemer <michel@undercouch.de>"]
+description = "Companion code for my talk 'Can you find Rust on a map?' at RustLab 2026"
+publish = false
+license = "MIT"
+repository = "https://github.com/michel-kraemer/rustlab-2026-can-you-find-rust-on-a-map"
+
+[dependencies]
+anstream = "1.0.0"
+anyhow = "1.0.104"
+clap = { version = "4", features = ["derive", "wrap_help"] }
+geo = "0.33.1"
+geojson = "1.0.0"
+osmpbf = "0.3.8"
+owo-colors = "4.4.0"
+proj = "0.31.0"
+rstar = "0.12.0"
+serde_json = "1.0.154"
