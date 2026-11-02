@@ -11,6 +11,21 @@ use owo_colors::OwoColorize as _;
 use proj::{Proj, Transform};
 use rstar::{AABB, RTree, RTreeObject, primitives::GeomWithData};
 
+/// Expand an envelope
+trait Expand {
+    /// Expand `self` by a given distance in all directions
+    fn expand(&self, d: f64) -> Self;
+}
+
+impl Expand for AABB<Point> {
+    fn expand(&self, d: f64) -> AABB<Point> {
+        AABB::from_corners(
+            Point::new(self.lower().x() - d, self.lower().y() - d),
+            Point::new(self.upper().x() + d, self.upper().y() + d),
+        )
+    }
+}
+
 /// Check if a GeoJSON feature is a possible pirate den
 fn has_pirates(feature: &Feature) -> bool {
     feature
@@ -96,12 +111,8 @@ pub fn run(input: &Path) -> Result<()> {
     // within a maximum distance of 100m
     let mut min_pirate_den = (f64::MAX, None);
     for p in &pirate_dens {
-        let env = p.envelope();
-        let expanded = AABB::from_corners(
-            Point::new(env.lower().x() - 100.0, env.lower().y() - 100.0),
-            Point::new(env.upper().x() + 100.0, env.upper().y() + 100.0),
-        );
-        for candidate in ice_cream_parlors.locate_in_envelope_intersecting(&expanded) {
+        let envelope = p.envelope().expand(100.0);
+        for candidate in ice_cream_parlors.locate_in_envelope_intersecting(&envelope) {
             let d = Euclidean.distance(p, candidate);
             if d <= 100.0 && d < min_pirate_den.0 {
                 min_pirate_den = (d, Some(p));
